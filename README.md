@@ -45,6 +45,10 @@ To run the application, use the following command:
 
 ## Running Tests
 
+## Accessing OpenAPI Documentation
+
+[Open API Specification](docs/openapi.yaml)
+
 ## Accessing Swagger UI
 The API documentation is available using Swagger UI. To access the Swagger UI, navigate to:
 [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
