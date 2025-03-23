@@ -16,12 +16,12 @@ This service provides a directory of places with their details, including name, 
 
 ## Getting Started
 
-### Prerequisites
+## Prerequisites
 
 - JDK 21 or higher
 - Gradle
 
-### Installation
+## Installation
 
 1. Clone the repository:
    ```sh
@@ -36,20 +36,24 @@ This service provides a directory of places with their details, including name, 
    ./gradlew build
    ```
 
-### Running the Application
+## Running the Application
 
 To run the application, use the following command:
 ```sh
 ./gradlew bootRun
 ```
 
-### Running Tests
+## Running Tests
+
+## Accessing Swagger UI
+The API documentation is available using Swagger UI. To access the Swagger UI, navigate to:
+[http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
 
 To execute the tests, use the following command:
 ```sh
 ./gradlew test
 ```
-## Usage
+
 
 ## API Endpoints
 
