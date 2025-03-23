@@ -1,0 +1,465 @@
+openapi: 3.0.3
+info:
+  title: Places API - OpenAPI 3.0
+  description: |-
+    API for managing places such as restaurants and other establishments.
+  version: 1.0.0
+servers:
+  - url: /
+tags:
+  - name: Places
+    description: API Operations related to places
+paths:
+  /places:
+    post:
+      tags:
+        - Places
+      summary: Create a new place
+      description: |-
+        Creates a new place with a name, description, address, and opening hours.
+      operationId: createPlace
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PlaceInput'
+      responses:
+        '201':
+          description: Place successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Place'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: Conflict, place already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+    get:
+      tags:
+        - Places
+      summary: List all places
+      description: Returns a list of all available places
+      operationId: getPlaces
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Place'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+
+  /places/{placeId}:
+    get:
+      tags:
+        - Places
+      summary: Get a place by ID
+      description: Returns a single place identified by its ID
+      operationId: getPlaceById
+      parameters:
+        - name: placeId
+          in: path
+          description: ID of the place to retrieve
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Place'
+        '404':
+          description: Place not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+
+    delete:
+      tags:
+        - Places
+      summary: Delete a place
+      description: Deletes a place identified by its ID
+      operationId: deletePlace
+      parameters:
+        - name: placeId
+          in: path
+          description: ID of the place to delete
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Place successfully deleted
+        '404':
+          description: Place not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+
+  /places/{placeId}/addresses/{addressId}:
+    put:
+      tags:
+        - Places
+      summary: Update a specific address
+      description: Updates the address for a place using both the placeId and addressId
+      operationId: updateAddress
+      parameters:
+        - name: placeId
+          in: path
+          description: ID of the place
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: addressId
+          in: path
+          description: ID of the address to update
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddressInput'
+      responses:
+        '200':
+          description: Address successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Address'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '404':
+          description: Place or address not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+
+  /places/{placeId}/opening-hours:
+    post:
+      tags:
+        - Places
+      summary: Add new opening hours
+      description: Creates new opening hours for a place using the placeId
+      operationId: addOpeningHours
+      parameters:
+        - name: placeId
+          in: path
+          description: ID of the place
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OpeningHoursInput'
+      responses:
+        '201':
+          description: Opening hours successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpeningHours'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+
+  /places/{placeId}/opening-hours/{openingHoursId}:
+    put:
+      tags:
+        - Places
+      summary: Update specific opening hours
+      description: Updates the opening hours for a place using both the placeId and openingHoursId
+      operationId: updateOpeningHours
+      parameters:
+        - name: placeId
+          in: path
+          description: ID of the place
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: openingHoursId
+          in: path
+          description: ID of the opening hours to update
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OpeningHoursInput'
+      responses:
+        '200':
+          description: Opening hours successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpeningHours'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '404':
+          description: Opening hours for specified place not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+    delete:
+      tags:
+        - Places
+      summary: Delete a specific opening hours
+      description: Deletes the opening hours for a place using both the placeId and openingHoursId
+      operationId: deleteOpeningHours
+      parameters:
+        - name: placeId
+          in: path
+          description: ID of the place
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: openingHoursId
+          in: path
+          description: ID of the opening hours to delete
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Opening hours successfully deleted
+        '404':
+          description: Opening hours for specified place not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+
+components:
+  schemas:
+    # Base entity with common properties for objects that will have IDs
+    Entity:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+          description: Unique identifier for the object
+
+    # Input schemas (without IDs for creation)
+    AddressInput:
+      type: object
+      properties:
+        street:
+          type: string
+          example: "123 Main St"
+        city:
+          type: string
+          example: "San Francisco"
+        postcode:
+          type: string
+          example: "94105"
+        country:
+          type: string
+          example: "USA"
+      required:
+        - street
+        - city
+        - postcode
+        - country
+
+    OpeningHoursInput:
+      type: object
+      properties:
+        dayOfWeek:
+          type: string
+          enum: [MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY]
+          example: "MONDAY"
+        openingTime:
+          type: string
+          format: time
+          example: "09:00"
+          description: Local time when the place opens in HH:MM format
+        closingTime:
+          type: string
+          format: time
+          example: "18:00"
+          description: Local time when the place closes in HH:MM format
+        closed:
+          type: boolean
+          example: false
+          description: Indicates if the place is closed on this day
+      required:
+        - dayOfWeek
+        - closed
+
+    PlaceInput:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Delicious Restaurant"
+        description:
+          type: string
+          example: "A family-friendly restaurant serving international cuisine"
+        address:
+          $ref: '#/components/schemas/AddressInput'
+        openingHours:
+          type: array
+          items:
+            $ref: '#/components/schemas/OpeningHoursInput'
+      required:
+        - name
+        - address
+        - openingHours
+
+    # Response schemas (with IDs after creation)
+    Address:
+      allOf:
+        - $ref: '#/components/schemas/Entity'
+        - $ref: '#/components/schemas/AddressInput'
+
+    OpeningHours:
+      allOf:
+        - $ref: '#/components/schemas/Entity'
+        - $ref: '#/components/schemas/OpeningHoursInput'
+
+    GroupedOpeningHours:
+      type: object
+      properties:
+        daysOfWeek:
+          type: string
+          example: "Monday - Friday"
+        openingHours:
+          type: array
+          items:
+            type: string
+            example: "11:30 - 15:00"
+
+    Place:
+      allOf:
+        - $ref: '#/components/schemas/Entity'
+        - type: object
+          properties:
+            name:
+              type: string
+              example: "Delicious Restaurant"
+            description:
+              type: string
+              example: "A family-friendly restaurant serving international cuisine"
+            address:
+              $ref: '#/components/schemas/Address'
+            openingHours:
+              type: array
+              items:
+                $ref: '#/components/schemas/OpeningHours'
+            groupedOpeningHours:
+              type: array
+              items:
+                $ref: '#/components/schemas/GroupedOpeningHours'
+          required:
+            - name
+            - address
+            - openingHours
+            - groupedOpeningHours
+
+    Problem:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+          example: 400
+        message:
+          type: string
+          example: "Invalid input provided"
+      required:
+        - code
+        - message
