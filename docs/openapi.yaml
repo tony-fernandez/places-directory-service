@@ -218,8 +218,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/OpeningHours'
-        '400':
-          description: Invalid input
+        '409':
+          description: Duplicate opening hours for the same day
           content:
             application/json:
               schema:
