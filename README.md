@@ -62,7 +62,7 @@ To execute the tests, use the following command:
 ## API Endpoints
 
 ### POST /places
-This endpoint creates a new place with an address as well as a list of opening times.  The API ensures uniqueness of the place name and opening times. 
+This endpoint creates a new place with an address as well as a list of opening times.  The API ensures uniqueness of the place name and opening times.  The API also ensures the given opening and closing times are of the correct format and that closing times are after opening times, if either are incorrect a `400 Bad Request` http code is returned.
 
 If the place name already exists, the API returns a `409 Conflict` status code with an error message. If the opening times overlap with an existing place, the API returns a `409 Conflict` status code with an error message.
 Additionally, the API ensures that no duplicate opening times are provided for the same day of the week. If duplicate opening times are provided, the API returns a `409 Conflict` status code with an error message.
@@ -494,5 +494,7 @@ On successful execution, the API returns a `200 Ok` status code.
 | AddressNotFoundException       | Thrown when attempting to update a non existent address.                                                                                                                         |
 | DuplicateOpeningHoursException | Thrown when attempting to create a new place with duplicate addresses, or when attempting to create a new opening hours or update an existing entry that will cause a duplicate. |
 | ExistingPlaceException         | Thrown when attempting to create a place with a name already stored.                                                                                                             |
+| InvalidOpeningHoursException   | Thrown when the given hour does not represent a valid hour.                                                                                                                      |
+| MissingTimeException           | Thrown when no time is given.                                                                                                                                                    |
 | OpeningHoursNotFoundException  | Thrown when attempting to update a non existent opening hours entry.                                                                                                             |
 | PlaceNotFoundException         | Thrown when attempting to retrieve a non place entry.                                                                                                                            |

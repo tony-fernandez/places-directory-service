@@ -12,6 +12,7 @@ import static org.springframework.http.HttpMethod.DELETE;
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.http.HttpMethod.PUT;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.CONFLICT;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
@@ -111,6 +112,56 @@ class PlacesControllerTest {
     assertThat(response.getStatusCode(), is(equalTo(CONFLICT)));
     assertThat(response.getBody().getMessage(), is(equalTo(
         "Invalid opening hours.  Please provide unique opening hours for each day of the week.")));
+  }
+
+  @Test
+  void givenMissingOpeningTimeShouldReturnBadRequestHttpCode() {
+    OpeningHoursInput openingHoursInput1 = new OpeningHoursInput();
+    openingHoursInput1.setDayOfWeek(OpeningHoursInput.DayOfWeekEnum.MONDAY);
+    openingHoursInput1.setClosingTime("17:00");
+    PlaceInput placeInput = place("Orange River", "Best Chinese food in town");
+    placeInput.setOpeningHours(List.of(openingHoursInput1));
+
+    ResponseEntity<Problem> response = restTemplate.postForEntity(placesUrl(), placeInput,
+        Problem.class);
+
+    assertThat(response.getStatusCode(), is(equalTo(BAD_REQUEST)));
+    assertThat(response.getBody().getMessage(), is(equalTo(
+        "Opening time and closing time must be provided.")));
+  }
+
+  @Test
+  void givenInvalidOpeningTimeShouldReturnBadRequestHttpCode() {
+    OpeningHoursInput openingHoursInput1 = new OpeningHoursInput();
+    openingHoursInput1.setDayOfWeek(OpeningHoursInput.DayOfWeekEnum.MONDAY);
+    openingHoursInput1.setOpeningTime("invalid");
+    openingHoursInput1.setClosingTime("17:00");
+    PlaceInput placeInput = place("Blue River", "Best Chinese food in town");
+    placeInput.setOpeningHours(List.of(openingHoursInput1));
+
+    ResponseEntity<Problem> response = restTemplate.postForEntity(placesUrl(), placeInput,
+        Problem.class);
+
+    assertThat(response.getStatusCode(), is(equalTo(BAD_REQUEST)));
+    assertThat(response.getBody().getMessage(), is(equalTo(
+        "Invalid time 'invalid'.  Please provide time correct format, i.e. '10:00'")));
+  }
+
+  @Test
+  void givenClosingTimeIsBeforeOpeningTimeShouldReturnBadRequestHttpCode() {
+    OpeningHoursInput openingHoursInput1 = new OpeningHoursInput();
+    openingHoursInput1.setDayOfWeek(OpeningHoursInput.DayOfWeekEnum.MONDAY);
+    openingHoursInput1.setOpeningTime("18:00");
+    openingHoursInput1.setClosingTime("17:00");
+    PlaceInput placeInput = place("Green River", "Best Chinese food in town");
+    placeInput.setOpeningHours(List.of(openingHoursInput1));
+
+    ResponseEntity<Problem> response = restTemplate.postForEntity(placesUrl(), placeInput,
+        Problem.class);
+
+    assertThat(response.getStatusCode(), is(equalTo(BAD_REQUEST)));
+    assertThat(response.getBody().getMessage(), is(equalTo(
+        "Opening time 18:00 must be before closing time 17:00.")));
   }
 
   @Test

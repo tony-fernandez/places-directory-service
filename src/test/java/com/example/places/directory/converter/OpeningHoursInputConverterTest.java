@@ -5,7 +5,10 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import com.example.places.directory.exception.InvalidOpeningHoursException;
+import com.example.places.directory.exception.MissingTimeException;
 import com.example.places.directory.model.OpeningHoursInput;
 import com.example.places.directory.model.OpeningHoursInput.DayOfWeekEnum;
 import com.example.places.directory.persistence.model.OpeningHoursEntity;
@@ -29,7 +32,7 @@ class OpeningHoursInputConverterTest extends AbstractConverterTest {
   }
 
   @Test
-  void givenNoOpeningOrClosingTimesOpeningAndClosingTimesShouldNoBeSet() {
+  void givenClosedIsTrueOpeningAndClosingTimesShouldNoBeSet() {
     OpeningHoursInput input = new OpeningHoursInput();
     input.setClosed(true);
     input.setDayOfWeek(DayOfWeekEnum.MONDAY);
@@ -43,13 +46,65 @@ class OpeningHoursInputConverterTest extends AbstractConverterTest {
   }
 
   @Test
+  void givenOpeningTimeNotSetShouldThrowMissingOpeningHoursException() {
+    OpeningHoursInput input = new OpeningHoursInput();
+    input.setClosed(false);
+    input.setDayOfWeek(DayOfWeekEnum.MONDAY);
+    input.setClosingTime(CLOSING_TIME_S);
+
+    assertThrows(MissingTimeException.class, () -> openingHoursInputConverter.convert(input));
+  }
+
+  @Test
+  void givenClosingTimeNotSetShouldThrowMissingOpeningHoursException() {
+    OpeningHoursInput input = new OpeningHoursInput();
+    input.setClosed(false);
+    input.setDayOfWeek(DayOfWeekEnum.MONDAY);
+    input.setOpeningTime(OPENING_TIME_S);
+
+    assertThrows(MissingTimeException.class, () -> openingHoursInputConverter.convert(input));
+  }
+
+  @Test
+  void givenInvalidOpeningTimeShouldThrowException() {
+    OpeningHoursInput input = new OpeningHoursInput();
+    input.setClosed(false);
+    input.setDayOfWeek(DayOfWeekEnum.MONDAY);
+    input.setOpeningTime("invalid");
+    input.setClosingTime(CLOSING_TIME_S);
+
+    assertThrows(InvalidOpeningHoursException.class, () -> openingHoursInputConverter.convert(input));
+  }
+
+  @Test
+  void givenInvalidClosingTimeShouldThrowException() {
+    OpeningHoursInput input = new OpeningHoursInput();
+    input.setClosed(false);
+    input.setDayOfWeek(DayOfWeekEnum.MONDAY);
+    input.setOpeningTime(OPENING_TIME_S);
+    input.setClosingTime("invalid");
+
+    assertThrows(InvalidOpeningHoursException.class, () -> openingHoursInputConverter.convert(input));
+  }
+
+  @Test
+  void givenClosingTimeBeforeOpeningTimeShouldThrowInvalidOpeningHoursException() {
+    OpeningHoursInput input = new OpeningHoursInput();
+    input.setClosed(false);
+    input.setDayOfWeek(DayOfWeekEnum.MONDAY);
+    input.setOpeningTime(CLOSING_TIME_S);
+    input.setClosingTime(OPENING_TIME_S);
+
+    assertThrows(InvalidOpeningHoursException.class, () -> openingHoursInputConverter.convert(input));
+  }
+
+  @Test
   void shouldConvertAllValues() {
     OpeningHoursInput input = new OpeningHoursInput();
     input.setClosed(false);
     input.setDayOfWeek(DayOfWeekEnum.MONDAY);
     input.setOpeningTime(OPENING_TIME_S);
     input.setClosingTime(CLOSING_TIME_S);
-
 
     OpeningHoursEntity output = openingHoursInputConverter.convert(input);
 
